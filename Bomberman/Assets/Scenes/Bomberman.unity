@@ -2380,6 +2380,7 @@ GameObject:
   - component: {fileID: 440180670}
   - component: {fileID: 440180671}
   - component: {fileID: 440180672}
+  - component: {fileID: 440180673}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -2489,6 +2490,22 @@ MonoBehaviour:
   spriteRendererDown: {fileID: 1409467454}
   spriteRendererLeft: {fileID: 401377223}
   spriteRendererRight: {fileID: 893008040}
+--- !u!114 &440180673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 440180668}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7228a24cdd54b5c4d8f9ef95defa51d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bombPrefab: {fileID: 415450872229558660, guid: 279bf4f2a4818b4498a25c025e42a580, type: 3}
+  inputKey: 32
+  bombFuseTime: 3
+  bombAmount: 1
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -2525,7 +2542,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 1, g: 0.918573, b: 0.73899364, a: 0}
+  m_BackGroundColor: {r: 0.93710685, g: 0.8220454, b: 0.6394722, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
