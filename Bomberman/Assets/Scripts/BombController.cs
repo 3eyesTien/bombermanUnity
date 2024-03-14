@@ -4,11 +4,17 @@ using UnityEngine;
 
 public class BombController : MonoBehaviour
 {
+    [Header ("Bomb")] // Headers create headers for organization of groups of vars in Unity's inspector
     public GameObject bombPrefab;
     public KeyCode inputKey = KeyCode.Space;
     public float bombFuseTime = 3f; // Time until bomb explodes. Default at 3 seconds
     public int bombAmount = 1; // How many bombs player can have on the field simultaneously
     private int bombsRemaining;
+
+    [Header ("Explosion")]
+    public Explosion explosionPrefab; //When assigning prefab in editor, it has to have the Explosion script attached
+    public float explosionDuration = 1f;
+    public int explosionRadius = 1;
 
     private void OnEnable()
     {
@@ -36,6 +42,16 @@ public class BombController : MonoBehaviour
 
         // Suspend execution of this function for the length of bombFuseTime
         yield return new WaitForSeconds(bombFuseTime);
+
+        // Round off bomb position so that it's aligned with the grid tiles instead of between tiles
+        position = bomb.transform.position; 
+        position.x = Mathf.Round(position.x);
+        position.y = Mathf.Round(position.y);
+
+        // Create the explosion
+        Explosion explosion = Instantiate(explosionPrefab, position, Quaternion.identity);
+        explosion.SetActiveRenderer(explosion.start);
+        Destroy(explosion.gameObject, explosionDuration);
 
         Destroy(bomb);
         bombsRemaining++;
