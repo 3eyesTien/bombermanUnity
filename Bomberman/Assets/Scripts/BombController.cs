@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class BombController : MonoBehaviour
 {
@@ -13,8 +14,13 @@ public class BombController : MonoBehaviour
 
     [Header ("Explosion")]
     public Explosion explosionPrefab; //When assigning prefab in editor, it has to have the Explosion script attached
+    public LayerMask explosionLayerMask;
     public float explosionDuration = 1f;
     public int explosionRadius = 1;
+
+    [Header("Destructible")]
+    public Destructible destructiblePrefab;
+    public Tilemap desctrutibleTiles;
 
     private void OnEnable()
     {
@@ -51,10 +57,42 @@ public class BombController : MonoBehaviour
         // Create the explosion
         Explosion explosion = Instantiate(explosionPrefab, position, Quaternion.identity);
         explosion.SetActiveRenderer(explosion.start);
-        Destroy(explosion.gameObject, explosionDuration);
+        explosion.DestroyAfter(explosionDuration);
+
+        Explode(position, Vector2.up, explosionRadius);
+        Explode(position, Vector2.down, explosionRadius);
+        Explode(position, Vector2.left, explosionRadius);
+        Explode(position, Vector2.right, explosionRadius);
 
         Destroy(bomb);
         bombsRemaining++;
+    }
+
+    // Make the explosion expand from the center of the bomb
+    private void Explode(Vector2 position, Vector2 direction, int length) 
+    { 
+        if(length <= 0)
+        {
+            return;
+        }
+
+        position += direction; // Get new position of explosion
+
+        // Create a box and  check if a collider is overlapping that box
+        // Layermask checks only certain layers for objects. In this case, the stage objects only
+        if(Physics2D.OverlapBox(position, Vector2.one / 2f, 0f, explosionLayerMask))
+        {
+            return; // Doesn't instantiate an explosion because it returned a collider in the OverlapBox
+        }
+
+        Explosion explosion = Instantiate(explosionPrefab, position, Quaternion.identity);
+        // Depending on the length of the explosion, it'll render the middle or end sprites of the full explosion animation
+        // If there are multiple "lengths" left, it'll render the middle, otherwise it'll render the tip of the explosion
+        explosion.SetActiveRenderer(length > 1 ? explosion.middle : explosion.end);
+        explosion.SetDirection(direction); // Rotate the explosion up, down, left, or right
+        explosion.DestroyAfter(explosionDuration);
+
+        Explode(position, direction, length - 1); // Recursively call the function until length <= 0;
     }
     
     // Make it so that the player can lay a bomb at the current position, then remove the trigger to be able to interact with/push it
