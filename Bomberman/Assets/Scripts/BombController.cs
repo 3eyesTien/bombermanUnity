@@ -108,6 +108,12 @@ public class BombController : MonoBehaviour
             destructibleTiles.SetTile(cell, null);
         }
     }
+
+    public void AddBomb()
+    {
+        bombAmount++;
+        bombsRemaining++;
+    }
     
     // Make it so that the player can lay a bomb at the current position, then remove the trigger to be able to interact with/push it
     private void OnTriggerExit2D(Collider2D other)
