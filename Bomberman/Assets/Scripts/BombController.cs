@@ -20,7 +20,7 @@ public class BombController : MonoBehaviour
 
     [Header("Destructible")]
     public Destructible destructiblePrefab;
-    public Tilemap desctrutibleTiles;
+    public Tilemap destructibleTiles;
 
     private void OnEnable()
     {
@@ -82,6 +82,7 @@ public class BombController : MonoBehaviour
         // Layermask checks only certain layers for objects. In this case, the stage objects only
         if(Physics2D.OverlapBox(position, Vector2.one / 2f, 0f, explosionLayerMask))
         {
+            ClearDestructible(position);
             return; // Doesn't instantiate an explosion because it returned a collider in the OverlapBox
         }
 
@@ -93,6 +94,19 @@ public class BombController : MonoBehaviour
         explosion.DestroyAfter(explosionDuration);
 
         Explode(position, direction, length - 1); // Recursively call the function until length <= 0;
+    }
+
+    private void ClearDestructible(Vector2 position) 
+    {
+        Vector3Int cell = destructibleTiles.WorldToCell(position); // Grab a cell to identify the position of the destructible tile from world coordinates
+        TileBase tile = destructibleTiles.GetTile(cell);
+
+        if(tile != null)
+        {
+            // Instantiate a wall prefab over the tile that got exploded
+            Instantiate(destructiblePrefab, position, Quaternion.identity);
+            destructibleTiles.SetTile(cell, null);
+        }
     }
     
     // Make it so that the player can lay a bomb at the current position, then remove the trigger to be able to interact with/push it
